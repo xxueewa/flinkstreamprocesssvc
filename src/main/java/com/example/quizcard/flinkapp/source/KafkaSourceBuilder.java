@@ -1,22 +1,27 @@
 package com.example.quizcard.flinkapp.source;
 
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import com.example.quizcard.flinkapp.model.Attempt;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KafkaSourceBuilder {
 
-    private KafkaSourceBuilder(){}
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String brokers;
 
-    public static KafkaSource<String> build(String topic) {
-        return KafkaSource.<String>builder()
-                .setBootstrapServers("localhost:9092")
+    @Value("${spring.kafka.consumer.group-id}")
+    private String group;
+
+    public KafkaSource<Attempt> build(String topic) {
+        return KafkaSource.<Attempt>builder()
+                .setBootstrapServers(brokers)
                 .setTopics(topic)
-                .setGroupId("flink-consumer")
-                .setStartingOffsets(OffsetsInitializer.latest())
-                .setValueOnlyDeserializer(new SimpleStringSchema())
+                .setGroupId(group)
+                .setStartingOffsets(OffsetsInitializer.earliest())
+                .setValueOnlyDeserializer(new EventRecordDeserializer())
                 .build();
     }
 }

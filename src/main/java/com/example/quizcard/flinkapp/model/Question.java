@@ -7,7 +7,7 @@ public class Question {
     Integer id;
     Integer sourceId;
     String subject;
-    Integer level;
+    String level;
     String text;
     String studentAnswer;
     String answerKey;
