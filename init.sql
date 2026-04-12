@@ -20,6 +20,7 @@
 -- \dt              -- list tables
 -- SELECT * FROM events;
 -- \q               -- quit
+-- This design ensures the add/remove of subject won't need to alter the table DDL
 CREATE TABLE user_profile (
   account_id   VARCHAR(255) PRIMARY KEY,
   name         VARCHAR(255) NOT NULL,
