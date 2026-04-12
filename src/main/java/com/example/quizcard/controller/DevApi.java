@@ -1,6 +1,6 @@
 package com.example.quizcard.controller;
 
-import com.example.quizcard.flinkapp.model.UserProfile;
+import com.example.quizcard.flinkapp.model.UserSummary;
 import com.example.quizcard.flinkapp.util.UserProfileDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class DevApi {
     }
 
     @GetMapping("/query")
-    public UserProfile getUser(@RequestParam String accountId) {
+    public UserSummary getUser(@RequestParam String accountId) {
         return userProfileDAO.getUserProfile(accountId);
     }
 }

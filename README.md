@@ -4,6 +4,7 @@
 - bin/kafka-storage.sh format --standalone -t $KAFKA_CLUSTER_ID -c config/server.properties 
 - bin/kafka-server-start.sh config/server.properties
 
+- bin/kafka-server-stop.sh
 
 ### Topics
 - bin/kafka-topics.sh --bootstrap-server localhost:9092 --list

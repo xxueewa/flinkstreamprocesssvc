@@ -1,7 +1,7 @@
 package com.example.quizcard.flinkapp.util;
 
 import com.example.quizcard.flinkapp.mapper.UserProfileMapper;
-import com.example.quizcard.flinkapp.model.UserProfile;
+import com.example.quizcard.flinkapp.model.UserSummary;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public class UserErrorRateDAO {
         this.userProfileMapper = userProfileMapper;
     }
 
-    public UserProfile queryErrorRates(String accountId) {
+    public UserSummary queryErrorRates(String accountId) {
         List<Map<String, Object>> records = userProfileMapper.findErrorRatesByAccountId(accountId);
 
         Map<String, Double> errorRates = new HashMap<>();
@@ -27,9 +27,9 @@ public class UserErrorRateDAO {
             errorRates.put(subject, errorRate);
         });
 
-        UserProfile userProfile = new UserProfile();
-        userProfile.setAccountId(accountId);
-        userProfile.setErrorRates(errorRates);
-        return userProfile;
+        UserSummary userSummary = new UserSummary();
+        userSummary.setAccountId(accountId);
+        userSummary.setErrorRates(errorRates);
+        return userSummary;
     }
 }

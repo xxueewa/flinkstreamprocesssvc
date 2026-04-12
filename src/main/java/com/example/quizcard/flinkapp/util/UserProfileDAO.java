@@ -1,13 +1,11 @@
 package com.example.quizcard.flinkapp.util;
 
 import com.example.quizcard.flinkapp.mapper.UserProfileMapper;
-import com.example.quizcard.flinkapp.model.UserProfile;
+import com.example.quizcard.flinkapp.model.UserSummary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -38,14 +36,14 @@ public class UserProfileDAO {
     }
 
     @Transactional
-    public UserProfile getUserProfile(String accountId) {
-        UserProfile userProfile = new UserProfile();
+    public UserSummary getUserProfile(String accountId) {
+        UserSummary userSummary = new UserSummary();
         Map<String, Object> profileInfo = userProfileMapper.selectProfileById(accountId).get(0);
         List<Map<String, Object>> errorRateRecords = userProfileMapper.findErrorRatesByAccountId(accountId);
 
-        userProfile.setName(profileInfo.get("name").toString());
-        userProfile.setAccountId(accountId);
-        userProfile.setEmail(profileInfo.get("email").toString());
+        userSummary.setName(profileInfo.get("name").toString());
+        userSummary.setAccountId(accountId);
+        userSummary.setEmail(profileInfo.get("email").toString());
 
         Map<String, Double> errorRates = new HashMap<>();
         AtomicLong lastUpdateTime = new AtomicLong(Long.MIN_VALUE);
@@ -63,13 +61,13 @@ public class UserProfileDAO {
             lastUpdateTime.set(Math.max(lastUpdateTime.get(), lastUpdateMilli));
         });
 
-        userProfile.setErrorRates(errorRates);
+        userSummary.setErrorRates(errorRates);
         long createTimeMilli = LocalDateTime.parse(profileInfo.get("created_time").toString(), formatter)
                 .toInstant(ZoneOffset.of("-07:00"))
                 .toEpochMilli();
-        userProfile.setLastUpdate(lastUpdateTime.get());
-        userProfile.setCreatedTime(createTimeMilli);
+        userSummary.setLastUpdate(lastUpdateTime.get());
+        userSummary.setCreatedTime(createTimeMilli);
 
-        return userProfile;
+        return userSummary;
     }
 }

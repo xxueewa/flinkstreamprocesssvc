@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 @Data
-public class UserProfile {
+public class UserSummary {
     String accountId;
     String name;
     String email;
