@@ -21,5 +21,10 @@
 - account profile: accountId, each subjects' error rate
 - Weighted Random Sampling: P(select topic X) = error_rate(X) / sum(all error_rates), then pick the quiz questions 
   from selected topics
-- 
+- Bayesian Knowledge Tracing (BKT) Tracks P(learned) per skill over timeKhan Academy-style
 
+
+## In progress
+- use Table API to handle sql queries?
+- change the database & data model?
+- methods to sampling the topics and retrieve quiz question set from dataset
