@@ -1,7 +1,7 @@
 package com.example.quizcard.controller;
 
-import com.example.quizcard.flinkapp.model.UserSummary;
-import com.example.quizcard.flinkapp.util.UserProfileDAO;
+import com.example.quizcard.model.UserSummary;
+import com.example.quizcard.util.UserProfileDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

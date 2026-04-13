@@ -11,7 +11,7 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
+    url: jdbc:postgresql://localhost:5433/quizcard_flink_db
     username: myuser
     password: mypassword
     driver-class-name: org.postgresql.Driver

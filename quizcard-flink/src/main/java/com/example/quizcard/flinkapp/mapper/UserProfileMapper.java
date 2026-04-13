@@ -21,11 +21,11 @@ public interface UserProfileMapper {
             "</script>")
     void insertErrorRatesForProfile(@Param("accountId") String accountId, @Param("subjects") Set<String> subjects);
 
-    @Insert("INSERT INTO user_profile (account_id, name, email) VALUES (#{accountId}, #{name}, #{email})")
-    void insertUserProfile(@Param("accountId") String accountId, @Param("name") String name, @Param("email") String email);
-
-    @Select("SELECT * FROM user_profile WHERE account_id = #{accountId}")
-    List<Map<String, Object>> selectProfileById(@Param("accountId") String accountId);
+//    @Insert("INSERT INTO user_profile (account_id, name, email) VALUES (#{accountId}, #{name}, #{email})")
+//    void insertUserProfile(@Param("accountId") String accountId, @Param("name") String name, @Param("email") String email);
+//
+//    @Select("SELECT * FROM user_profile WHERE account_id = #{accountId}")
+//    List<Map<String, Object>> selectProfileById(@Param("accountId") String accountId);
 
     @Select("SELECT subject, error_rate, last_update FROM user_error_rate WHERE account_id = #{accountId}")
     List<Map<String, Object>> findErrorRatesByAccountId(@Param("accountId") String accountId);

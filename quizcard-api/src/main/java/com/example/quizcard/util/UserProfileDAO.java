@@ -1,7 +1,7 @@
-package com.example.quizcard.flinkapp.util;
+package com.example.quizcard.util;
 
-import com.example.quizcard.flinkapp.mapper.UserProfileMapper;
-import com.example.quizcard.flinkapp.model.UserSummary;
+import com.example.quizcard.mapper.UserProfileMapper;
+import com.example.quizcard.model.UserSummary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

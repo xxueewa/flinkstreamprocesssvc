@@ -14,27 +14,16 @@
 -- View logs
 -- docker compose logs postgres
 
--- docker exec -it flink-postgres psql -U myuser -d mydb
+-- docker exec -it quizcard-api-postgres psql -U myuser -d quizcard_api_db
 --
 -- Then run SQL
 -- \dt              -- list tables
--- SELECT * FROM events;
+-- SELECT * FROM user_profile;
 -- \q               -- quit
--- This design ensures the add/remove of subject won't need to alter the table DDL
+
 CREATE TABLE user_profile (
   account_id   VARCHAR(255) PRIMARY KEY,
   name         VARCHAR(255) NOT NULL,
   email        VARCHAR(255) NOT NULL,
   created_time TIMESTAMP NOT NULL DEFAULT NOW()
 );
-
-CREATE TABLE user_error_rate (
-  account_id   VARCHAR(255) NOT NULL REFERENCES user_profile(account_id),
-  subject      VARCHAR(255) NOT NULL,
-  error_rate   DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-  last_update  TIMESTAMP NOT NULL DEFAULT NOW(),
-  created_time TIMESTAMP NOT NULL,
-  PRIMARY KEY (account_id, subject)
-);
-
-

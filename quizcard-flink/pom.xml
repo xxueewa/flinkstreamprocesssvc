@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>quizcard</artifactId>
+	<artifactId>quizcard-flink</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>quizcard-flink</name>
+	<description>Flink streaming jobs for quizcard</description>
 	<url/>
 	<licenses>
 		<license/>
