@@ -2,7 +2,7 @@ package com.example.quizcard.flinkapp.job;
 
 import com.example.quizcard.flinkapp.model.Attempt;
 import com.example.quizcard.flinkapp.model.UserErrorRate;
-import com.example.quizcard.flinkapp.sink.KafkaSinkBuilder;
+//import com.example.quizcard.flinkapp.sink.KafkaSinkBuilder;
 import com.example.quizcard.flinkapp.source.KafkaSourceBuilder;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder;
@@ -23,9 +23,9 @@ public class FlinkStreamingJob {
 
     @Autowired
     KafkaSourceBuilder kafkaSourceBuilder;
-
-    @Autowired
-    KafkaSinkBuilder kafkaSinkBuilder;
+//
+//    @Autowired
+//    KafkaSinkBuilder kafkaSinkBuilder;
 
     @Autowired
     StatisticCalculator statisticCalculator;
@@ -40,20 +40,20 @@ public class FlinkStreamingJob {
             KafkaSource<Attempt> source = kafkaSourceBuilder.build(topic);
             DataStream<Attempt> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
 
-            logger.log(Level.INFO, "Get source, Start processing...");
-
-            DataStream<UserErrorRate> output = stream
+            DataStream<String> output = stream
                     .keyBy(Attempt::getId)
                     .process(statisticCalculator)
                     .name("calculator");
 
-            JdbcStatementBuilder<UserErrorRate> statementBuilder = (statement, record) -> {
-                statement.setDouble(1, record.getErrorRate());
-                statement.setString(2, record.getAccountId());
-                statement.setString(3, record.getSubject());
-            };
+            output.print();
 
-            output.sinkTo(kafkaSinkBuilder.userProfileSinker(statementBuilder));
+//            JdbcStatementBuilder<UserErrorRate> statementBuilder = (statement, record) -> {
+//                statement.setDouble(1, record.getErrorRate());
+//                statement.setString(2, record.getAccountId());
+//                statement.setString(3, record.getSubject());
+//            };
+//
+//            output.sinkTo(kafkaSinkBuilder.userProfileSinker(statementBuilder));
 
             env.execute("Flink Kafka Streaming Job");
         } catch (Exception e) {
