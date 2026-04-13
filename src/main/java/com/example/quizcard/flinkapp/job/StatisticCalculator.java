@@ -17,12 +17,12 @@ import java.util.logging.Logger;
 @Component
 public class StatisticCalculator extends KeyedProcessFunction<String, Attempt, UserErrorRate> {
 
-    private static final Logger logger = Logger.getLogger(StatisticCalculator.class.getName());
+    final transient double ALPHA_FACTOR = 0.2;
 
-    private static final double ALPHA_FACTOR = 0.2;
+    final transient Logger logger = Logger.getLogger(StatisticCalculator.class.getName());
 
     @Autowired
-    UserErrorRateDAO userErrorRateDAO;
+    transient UserErrorRateDAO userErrorRateDAO;
 
     @Override
     public void processElement(Attempt attempt, Context context, Collector<UserErrorRate> collector) {
@@ -30,8 +30,7 @@ public class StatisticCalculator extends KeyedProcessFunction<String, Attempt, U
             new_rate = (1 - α) × old_rate + α × new_result
             Where α (alpha) controls how fast the rate reacts to new results. typically α = 0.2 to 0.3.
         */
-        logger.log(Level.INFO, "Processing attempt: accountId={0}, questions={1}",
-                new Object[]{attempt.getAccountId(), attempt.getQuestions().size()});
+        logger.log(Level.INFO, "Processing attempt: accountId={0}", attempt.getAccountId());
 
         UserSummary userSummary = userErrorRateDAO.queryErrorRates(attempt.getAccountId());
         Map<String, Double> updatedRates = getStringDoubleMap(attempt, userSummary);
@@ -43,8 +42,6 @@ public class StatisticCalculator extends KeyedProcessFunction<String, Attempt, U
             userErrorRate.setSubject(subject);
             userErrorRate.setErrorRate(rate);
             collector.collect(userErrorRate);  // called N times, emits N records downstream
-            logger.log(Level.INFO, "Emitted: accountId={0}, subject={1}, errorRate={2}",
-                    new Object[]{attempt.getAccountId(), subject, rate});
         });
     }
 

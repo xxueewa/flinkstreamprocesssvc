@@ -43,7 +43,7 @@ public class KafkaSinkBuilder {
     @SuppressWarnings("unchecked")
     public <T> Sink<T> userProfileSinker(JdbcStatementBuilder<T> statementBuilder) {
         String updateQuery = "UPDATE user_error_rate SET error_rate=?, last_update=NOW() WHERE account_id = ? AND subject = ?";
-        return (Sink<T>) JdbcSink.<T>builder()
+        return JdbcSink.<T>builder()
                 .withQueryStatement(
                         updateQuery,
                         statementBuilder

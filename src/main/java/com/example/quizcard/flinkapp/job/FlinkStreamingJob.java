@@ -13,12 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
 public class FlinkStreamingJob {
 
-    static final Logger logger = Logger.getLogger(FlinkStreamingJob.class.getName());
+    private final Logger logger = Logger.getLogger(FlinkStreamingJob.class.getName());
 
     @Autowired
     KafkaSourceBuilder kafkaSourceBuilder;
@@ -38,6 +39,8 @@ public class FlinkStreamingJob {
         try {
             KafkaSource<Attempt> source = kafkaSourceBuilder.build(topic);
             DataStream<Attempt> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
+
+            logger.log(Level.INFO, "Get source, Start processing...");
 
             DataStream<UserErrorRate> output = stream
                     .keyBy(Attempt::getId)
