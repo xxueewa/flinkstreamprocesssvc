@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: quizcard-api-postgres
+    environment:
+      POSTGRES_DB: quizcard_api_db
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - quizcard_api_postgres_data:/var/lib/postgresql/data   # persist data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # auto-run on first start
+    restart: unless-stopped
+
+volumes:
+  quizcard_api_postgres_data:

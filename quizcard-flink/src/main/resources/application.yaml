@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: quizcard
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic: quiz-results-topic
+    consumer:
+      group-id: quiz-result-group
+      auto-offset-reset: earliest
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  datasource:
+    url: jdbc:postgresql://localhost:5433/quizcard_flink_db
+    username: myuser
+    password: mypassword
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
