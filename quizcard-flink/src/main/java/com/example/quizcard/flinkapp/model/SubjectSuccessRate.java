@@ -1,21 +1,21 @@
 package com.example.quizcard.flinkapp.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
-public class UserErrorRate implements Serializable {
+@NoArgsConstructor
+public class SubjectSuccessRate implements Serializable {
 
     String accountId;
 
     String subject;
 
-    double errorRate;
+    double successRate;
 
-    Timestamp lastUpdate;
-
-    Timestamp createdTime;
+    String updateTime;
 
 }

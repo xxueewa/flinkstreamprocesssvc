@@ -1,11 +1,10 @@
 package com.example.quizcard.flinkapp.job;
 
 import com.example.quizcard.flinkapp.model.Attempt;
-import com.example.quizcard.flinkapp.model.UserErrorRate;
 //import com.example.quizcard.flinkapp.sink.KafkaSinkBuilder;
+import com.example.quizcard.flinkapp.model.SubjectSuccessRate;
 import com.example.quizcard.flinkapp.source.KafkaSourceBuilder;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
-import org.apache.flink.connector.jdbc.JdbcStatementBuilder;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -40,7 +38,7 @@ public class FlinkStreamingJob {
             KafkaSource<Attempt> source = kafkaSourceBuilder.build(topic);
             DataStream<Attempt> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
 
-            DataStream<String> output = stream
+            DataStream<SubjectSuccessRate> output = stream
                     .keyBy(Attempt::getId)
                     .process(statisticCalculator)
                     .name("calculator");

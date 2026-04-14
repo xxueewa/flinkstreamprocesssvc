@@ -22,29 +22,45 @@ class EventRecordDeserializerTest {
     void deserialize_validPayload_returnsAttempt() throws IOException {
         String json = """
                 {
-                  "id": "attempt-1",
-                  "accountId": "account-42",
-                  "timestamp": "2026-04-13T10:00:00Z",
-                  "questions": [
-                    {
-                      "id": 0,
-                      "sourceId": 10,
-                      "subject": "Math",
-                      "level": "easy",
-                      "text": "What is 2+2?",
-                      "studentAnswer": "4",
-                      "answerKey": "4"
+                    "id": "attempt-1",
+                    "accountId": "account-42",
+                    "timestamp": "2026-04-13T10:00:00Z",
+                    "originalSuccessRate": {
+                      "chemistry": 0,
+                      "other": 0,
+                      "biology": 0,
+                      "law": 0,
+                      "business": 0,
+                      "health": 0,
+                      "engineering": 0,
+                      "history": 0,
+                      "philosophy": 0,
+                      "economics": 0,
+                      "psychology": 0,
+                      "computer_science": 0,
+                      "physics": 0,
+                      "math": 0
                     },
-                                        {
-                      "id": 1,
-                      "sourceId": 10,
-                      "subject": "Math",
-                      "level": "easy",
-                      "text": "What is 2+2?",
-                      "studentAnswer": "4",
-                      "answerKey": "4"
-                    }
-                  ]
+                    "questions": [
+                        {
+                          "id": 0,
+                          "sourceId": 10,
+                          "subject": "Math",
+                          "level": "easy",
+                          "text": "What is 2+2?",
+                          "studentAnswer": "4",
+                          "answerKey": "4"
+                        },
+                        {
+                          "id": 1,
+                          "sourceId": 10,
+                          "subject": "Math",
+                          "level": "easy",
+                          "text": "What is 2+2?",
+                          "studentAnswer": "4",
+                          "answerKey": "4"
+                        }
+                    ]
                 }
                 """;
 
@@ -56,7 +72,9 @@ class EventRecordDeserializerTest {
         assertNotNull(result.getQuestions());
         assertEquals(2, result.getQuestions().size());
 
-        var question = result.getQuestions().get(0);
+        assertEquals(14, result.getOriginalSuccessRate().size());
+
+        var question = result.getQuestions().getFirst();
         assertEquals(0, question.getId());
         assertEquals(10, question.getSourceId());
         assertEquals("Math", question.getSubject());
@@ -70,10 +88,26 @@ class EventRecordDeserializerTest {
     void deserialize_emptyQuestions_returnsAttemptWithEmptyList() throws IOException {
         String json = """
                 {
-                  "id": "attempt-2",
-                  "accountId": "account-7",
-                  "timestamp": "2026-04-13T11:00:00Z",
-                  "questions": []
+                    "id": "attempt-2",
+                    "accountId": "account-7",
+                     "timestamp": "2026-04-13T11:00:00Z",
+                     "originalSuccessRate": {
+                          "chemistry": 0,
+                          "other": 0,
+                          "biology": 0,
+                          "law": 0,
+                          "business": 0,
+                          "health": 0,
+                          "engineering": 0,
+                          "history": 0,
+                          "philosophy": 0,
+                          "economics": 0,
+                          "psychology": 0,
+                          "computer_science": 0,
+                          "physics": 0,
+                          "math": 0
+                        },
+                    "questions": []
                 }
                 """;
 
