@@ -1,13 +1,14 @@
 package com.example.quizcard.flinkapp.job;
 
-import com.example.quizcard.flinkapp.model.Attempt;
-//import com.example.quizcard.flinkapp.sink.KafkaSinkBuilder;
-import com.example.quizcard.flinkapp.model.SubjectSuccessRate;
+import com.example.assessment.StudentAssessment;
+import com.example.assessment.UserFeatureRecord;
 import com.example.quizcard.flinkapp.source.KafkaSourceBuilder;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.operators.KeyedProcessOperator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,6 @@ public class FlinkStreamingJob {
 
     @Autowired
     KafkaSourceBuilder kafkaSourceBuilder;
-//
-//    @Autowired
-//    KafkaSinkBuilder kafkaSinkBuilder;
 
     @Autowired
     StatisticCalculator statisticCalculator;
@@ -35,23 +33,14 @@ public class FlinkStreamingJob {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         try {
-            KafkaSource<Attempt> source = kafkaSourceBuilder.build(topic);
-            DataStream<Attempt> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
+            KafkaSource<StudentAssessment> source = kafkaSourceBuilder.build(topic);
+            DataStream<StudentAssessment> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
 
-            DataStream<SubjectSuccessRate> output = stream
-                    .keyBy(Attempt::getId)
-                    .process(statisticCalculator)
-                    .name("calculator");
+            DataStream<UserFeatureRecord> output = stream
+                    .keyBy(a -> a.getAccountId().toString())
+                    .transform("calculator", TypeInformation.of(UserFeatureRecord.class), new KeyedProcessOperator<>(statisticCalculator));
 
             output.print();
-
-//            JdbcStatementBuilder<UserErrorRate> statementBuilder = (statement, record) -> {
-//                statement.setDouble(1, record.getErrorRate());
-//                statement.setString(2, record.getAccountId());
-//                statement.setString(3, record.getSubject());
-//            };
-//
-//            output.sinkTo(kafkaSinkBuilder.userProfileSinker(statementBuilder));
 
             env.execute("Flink Kafka Streaming Job");
         } catch (Exception e) {
