@@ -3,7 +3,7 @@ spring:
     name: quizcard
   kafka:
     bootstrap-servers: pkc-n98pk.us-west-2.aws.confluent.cloud:9092
-    topic: user_assessment_feature
+    topic: user_assessment_result
     consumer:
       group-id: quiz-result-group
       auto-offset-reset: earliest

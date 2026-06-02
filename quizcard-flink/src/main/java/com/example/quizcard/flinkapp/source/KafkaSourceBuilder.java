@@ -1,9 +1,12 @@
 package com.example.quizcard.flinkapp.source;
 
 import com.example.assessment.StudentAssessment;
+import com.example.quizcard.flinkapp.util.CredentialManager;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.formats.avro.registry.confluent.ConfluentRegistryAvroDeserializationSchema;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +16,8 @@ import java.util.Properties;
 
 @Component
 public class KafkaSourceBuilder {
+    @Autowired
+    CredentialManager credentialManager;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String brokers;
@@ -20,18 +25,17 @@ public class KafkaSourceBuilder {
     @Value("${spring.kafka.consumer.group-id}")
     private String group;
 
-    private String kafkaApiKey = "";
-
-    private String kafkaApiSecret = "";
-
     @Value("${spring.confluent.schema-registry.registry-url}")
     private String registryUrl;
 
-    private String registryApiKey = "";
-
-    private String registryApiSecret = "";
-
     public KafkaSource<StudentAssessment> build(String topic) {
+        JsonNode kafkaSecret = credentialManager.fetchSecret("flinkstreamprocesssvc/confluentcluster");
+        String kafkaApiKey = kafkaSecret.get("apiKey").asText();
+        String kafkaApiSecret = kafkaSecret.get("apiSecret").asText();
+        JsonNode registrySecret = credentialManager.fetchSecret("flinkstreamprocesssvc/schemaregistry");
+        String registryApiKey = registrySecret.get("apiKey").asText();
+        String registryApiSecret = registrySecret.get("apiSecret").asText();
+
         Properties kafkaProps = new Properties();
         kafkaProps.setProperty("security.protocol", "SASL_SSL");
         kafkaProps.setProperty("sasl.mechanism", "PLAIN");

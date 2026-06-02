@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Component
@@ -34,6 +35,7 @@ public class FlinkStreamingJob {
 
         try {
             KafkaSource<StudentAssessment> source = kafkaSourceBuilder.build(topic);
+            logger.log(Level.INFO, "Kafka Source Built for: " + topic);
             DataStream<StudentAssessment> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
 
             DataStream<UserFeatureRecord> output = stream
