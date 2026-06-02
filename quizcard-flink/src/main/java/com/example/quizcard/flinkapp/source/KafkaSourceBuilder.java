@@ -20,20 +20,16 @@ public class KafkaSourceBuilder {
     @Value("${spring.kafka.consumer.group-id}")
     private String group;
 
-    @Value("${spring.kafka.api-key}")
-    private String kafkaApiKey;
+    private String kafkaApiKey = "";
 
-    @Value("${spring.kafka.api-secret}")
-    private String kafkaApiSecret;
+    private String kafkaApiSecret = "";
 
     @Value("${spring.confluent.schema-registry.registry-url}")
     private String registryUrl;
 
-    @Value("${spring.confluent.schema-registry.api-key}")
-    private String registryApiKey;
+    private String registryApiKey = "";
 
-    @Value("${spring.confluent.schema-registry.api-secret}")
-    private String registryApiSecret;
+    private String registryApiSecret = "";
 
     public KafkaSource<StudentAssessment> build(String topic) {
         Properties kafkaProps = new Properties();
