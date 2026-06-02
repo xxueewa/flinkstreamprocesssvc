@@ -2,14 +2,17 @@ spring:
   application:
     name: quizcard
   kafka:
-    bootstrap-servers: localhost:9092
-    topic: quiz-results-topic
+    bootstrap-servers: pkc-n98pk.us-west-2.aws.confluent.cloud:9092
+    topic: user_assessment_result
     consumer:
       group-id: quiz-result-group
       auto-offset-reset: earliest
     producer:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  confluent:
+    schema-registry:
+      registry-url: "https://psrc-1ryeo07.us-west-2.aws.confluent.cloud"
   datasource:
     url: jdbc:postgresql://localhost:5433/quizcard_flink_db
     username: myuser

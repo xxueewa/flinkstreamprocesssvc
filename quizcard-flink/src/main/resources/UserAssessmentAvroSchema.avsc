@@ -1,0 +1,158 @@
+{
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "accountId",
+      "type": "string"
+    },
+    {
+      "name": "originalSuccessRate",
+      "type": {
+        "fields": [
+          {
+            "default": 0,
+            "name": "chemistry",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "other",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "biology",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "law",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "business",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "health",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "engineering",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "history",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "philosophy",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "economics",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "psychology",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "computer_science",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "physics",
+            "type": "double"
+          },
+          {
+            "default": 0,
+            "name": "math",
+            "type": "double"
+          }
+        ],
+        "name": "OriginalSuccessRate",
+        "type": "record"
+      }
+    },
+    {
+      "default": [],
+      "name": "questions",
+      "type": {
+        "items": {
+          "fields": [
+            {
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "name": "sourceId",
+              "type": "int"
+            },
+            {
+              "name": "subject",
+              "type": {
+                "name": "Subject",
+                "symbols": [
+                  "chemistry",
+                  "other",
+                  "biology",
+                  "law",
+                  "business",
+                  "health",
+                  "engineering",
+                  "history",
+                  "philosophy",
+                  "economics",
+                  "psychology",
+                  "computer_science",
+                  "physics",
+                  "math"
+                ],
+                "type": "enum"
+              }
+            },
+            {
+              "name": "level",
+              "type": "string"
+            },
+            {
+              "name": "text",
+              "type": "string"
+            },
+            {
+              "name": "studentAnswer",
+              "type": "string"
+            },
+            {
+              "name": "answerKey",
+              "type": "string"
+            }
+          ],
+          "name": "Question",
+          "type": "record"
+        },
+        "type": "array"
+      }
+    },
+    {
+      "name": "timestamp",
+      "type": "string"
+    }
+  ],
+  "name": "StudentAssessment",
+  "namespace": "com.example.assessment",
+  "type": "record"
+}
