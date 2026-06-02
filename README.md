@@ -17,6 +17,8 @@ to each learner's performance, strengths, and weaknesses.
 
 ### High-level Design
 
+AWS + Confluent Kafka + Flink + Spring Boot
+
 ```
 End User (UI + Kafka) ~60 ms
 └─── Drop user.assessment.result events to Kafka Cluster
