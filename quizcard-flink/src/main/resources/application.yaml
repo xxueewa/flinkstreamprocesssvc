@@ -3,9 +3,7 @@ spring:
     name: quizcard
   kafka:
     bootstrap-servers: pkc-n98pk.us-west-2.aws.confluent.cloud:9092
-    topic: topic_user_quiz_result
-    api-key: ${KAFKA_API_KEY}
-    api-secret: ${KAFKA_API_SECRET}
+    topic: user_assessment_feature
     consumer:
       group-id: quiz-result-group
       auto-offset-reset: earliest
@@ -15,8 +13,6 @@ spring:
   confluent:
     schema-registry:
       registry-url: "https://psrc-1ryeo07.us-west-2.aws.confluent.cloud"
-      api-key: ${SCHEMA_REGISTRY_API_KEY}
-      api-secret: ${SCHEMA_REGISTRY_API_SECRET}
   datasource:
     url: jdbc:postgresql://localhost:5433/quizcard_flink_db
     username: myuser
