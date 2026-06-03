@@ -1,13 +1,19 @@
 package com.example.quizcard.flinkapp.job;
 
+import com.codahale.metrics.SlidingWindowReservoir;
+import com.example.assessment.OriginalSuccessRate;
 import com.example.assessment.Question;
 import com.example.assessment.StudentAssessment;
 import com.example.assessment.Subject;
 import com.example.assessment.SubjectSuccessRates;
 import com.example.assessment.UserFeatureRecord;
-import org.apache.flink.api.common.state.ValueState;
 import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.typeinfo.TypeHint;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.dropwizard.metrics.DropwizardHistogramWrapper;
+import org.apache.flink.metrics.Histogram;
 import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
 import org.apache.flink.util.Collector;
 import org.springframework.stereotype.Component;
@@ -23,29 +29,48 @@ public class StatisticCalculator extends KeyedProcessFunction<String, StudentAss
     static final double ALPHA_FACTOR = 0.2;
 
     private transient ValueState<SubjectSuccessRates> ratesState;
-    private transient ValueState<Long> createdTimeState;
+    private transient Histogram histogram;
 
     @Override
     public void open(Configuration parameters) {
         ratesState = getRuntimeContext().getState(
                 new ValueStateDescriptor<>("success-rates", SubjectSuccessRates.class));
-        createdTimeState = getRuntimeContext().getState(
-                new ValueStateDescriptor<>("created-time", Long.class));
+        com.codahale.metrics.Histogram dropwizardHistogram =
+                new com.codahale.metrics.Histogram(new SlidingWindowReservoir(500));
+        this.histogram = getRuntimeContext()
+                .getMetricGroup()
+                .histogram("event.processing.latency.ms", new DropwizardHistogramWrapper(dropwizardHistogram));
     }
 
     @Override
     public void processElement(StudentAssessment attempt, Context context, Collector<UserFeatureRecord> collector) throws Exception {
+        long startTime = System.currentTimeMillis();
         logger.log(Level.INFO, "Processing attempt: accountId={0}", attempt.getAccountId());
 
         SubjectSuccessRates rates = ratesState.value();
+        OriginalSuccessRate originRates = attempt.getOriginalSuccessRate();
+        /*
+          This happens when:
+          - No checkpoint exists (first deploy, checkpoint storage wiped) -> build state from original rates
+          - Producer crashed and sends zeros -> ignore the payload, use the existing states
+        */
         if (rates == null) {
             rates = new SubjectSuccessRates();
-        }
-
-        Long createdTimeMs = createdTimeState.value();
-        if (createdTimeMs == null) {
-            createdTimeMs = System.currentTimeMillis();
-            createdTimeState.update(createdTimeMs);
+            OriginalSuccessRate originalSuccessRate = attempt.getOriginalSuccessRate();
+            rates.setChemistry(originalSuccessRate.getChemistry());
+            rates.setBiology(originalSuccessRate.getBiology());
+            rates.setLaw(originalSuccessRate.getLaw());
+            rates.setBusiness(originalSuccessRate.getBusiness());
+            rates.setHealth(originalSuccessRate.getHealth());
+            rates.setEngineering(originalSuccessRate.getEngineering());
+            rates.setHistory(originalSuccessRate.getHistory());
+            rates.setPhilosophy(originalSuccessRate.getPhilosophy());
+            rates.setEconomics(originalSuccessRate.getEconomics());
+            rates.setPsychology(originalSuccessRate.getPsychology());
+            rates.setComputerScience(originalSuccessRate.getComputerScience());
+            rates.setPhysics(originalSuccessRate.getPhysics());
+            rates.setMath(originalSuccessRate.getMath());
+            rates.setOther(originalSuccessRate.getOther());
         }
 
         for (Question q : attempt.getQuestions()) {
@@ -58,18 +83,17 @@ public class StatisticCalculator extends KeyedProcessFunction<String, StudentAss
         collector.collect(new UserFeatureRecord(
                 attempt.getAccountId(),
                 rates,
-                Instant.ofEpochMilli(createdTimeMs),
+                Instant.now(),
                 Instant.now()
         ));
+        long endTime = System.currentTimeMillis();
+        histogram.update(endTime - startTime);
     }
 
     private void applyEma(SubjectSuccessRates rates, Subject subject, double result) {
         switch (subject) {
             case chemistry:
                 rates.setChemistry(ema(rates.getChemistry(), result));
-                break;
-            case other:
-                rates.setOther(ema(rates.getOther(), result));
                 break;
             case biology:
                 rates.setBiology(ema(rates.getBiology(), result));
@@ -106,6 +130,9 @@ public class StatisticCalculator extends KeyedProcessFunction<String, StudentAss
                 break;
             case math:
                 rates.setMath(ema(rates.getMath(), result));
+                break;
+            case other:
+                rates.setOther(ema(rates.getOther(), result));
                 break;
             default:
                 logger.log(Level.WARNING, "Unknown subject: {0}", subject);

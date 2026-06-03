@@ -21,3 +21,7 @@ spring:
     hikari:
       maximum-pool-size: 10
       minimum-idle: 2
+metrics:
+  reporter:
+    prom:
+      class: org.apache.flink.metrics.prometheus.PrometheusReporter

@@ -3,6 +3,7 @@ package com.example.quizcard.flinkapp.job;
 import com.example.assessment.StudentAssessment;
 import com.example.assessment.UserFeatureRecord;
 import com.example.quizcard.flinkapp.source.KafkaSourceBuilder;
+import io.micrometer.core.annotation.Timed;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.connector.kafka.source.KafkaSource;
@@ -32,8 +33,8 @@ public class FlinkStreamingJob {
 
     public void run() {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-
         try {
+            logger.log(Level.INFO, "" + System.currentTimeMillis());
             KafkaSource<StudentAssessment> source = kafkaSourceBuilder.build(topic);
             logger.log(Level.INFO, "Kafka Source Built for: " + topic);
             DataStream<StudentAssessment> stream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "source");
