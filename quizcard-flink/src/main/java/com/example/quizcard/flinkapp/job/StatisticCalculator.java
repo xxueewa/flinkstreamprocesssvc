@@ -61,6 +61,8 @@ public class StatisticCalculator extends KeyedProcessFunction<String, StudentAss
                 Instant.ofEpochMilli(createdTimeMs),
                 Instant.now()
         ));
+
+        logger.log(Level.INFO, "Collection Completed: accountId={0}", attempt.getAccountId());
     }
 
     private void applyEma(SubjectSuccessRates rates, Subject subject, double result) {

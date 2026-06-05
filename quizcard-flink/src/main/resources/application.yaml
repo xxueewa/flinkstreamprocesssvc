@@ -3,13 +3,12 @@ spring:
     name: quizcard
   kafka:
     bootstrap-servers: pkc-n98pk.us-west-2.aws.confluent.cloud:9092
-    topic: user_assessment_result
     consumer:
+      topic: user_assessment_result
       group-id: quiz-result-group
       auto-offset-reset: earliest
     producer:
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      topic: user_assessment_feature
   confluent:
     schema-registry:
       registry-url: "https://psrc-1ryeo07.us-west-2.aws.confluent.cloud"
